@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  quran-bot:
+    build: .
+    container_name: quran-telegram-bot
+
+    # Advanced restart policy with limits
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 10s           # Wait 10 seconds between restart attempts
+        max_attempts: 5      # Stop trying after 5 failed attempts
+        window: 120s         # Consider restart successful if runs for 2+ minutes
+
+    # Environment variables from .env file
+    env_file:
+      - .env
+
+    # Persistent volume for SQLite database
+    volumes:
+      - ./data:/app/data
+
+    # Set timezone for proper scheduling
+    environment:
+      - TZ=America/New_York
+
+    # Health check to verify bot is running
+    healthcheck:
+      test: ["CMD-SHELL", "/app/healthcheck.sh"]
+      interval: 30s        # Check every 30 seconds
+      timeout: 10s         # Wait up to 10 seconds for response
+      retries: 3           # Mark unhealthy after 3 consecutive failures
+      start_period: 40s    # Grace period for bot to start up
+
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
