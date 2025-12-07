@@ -3,12 +3,14 @@ Main entry point for the Quran Telegram Bot.
 """
 
 import os
+import json
 import logging
 from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import Application
 
 import database
+import quran_service
 from bot import setup_bot
 from scheduler import setup_scheduler
 
@@ -27,7 +29,6 @@ def main():
 
     # Get configuration from environment
     telegram_token = os.getenv("TELEGRAM_BOT_TOKEN")
-    openai_api_key = os.getenv("OPENAI_API_KEY")
     timezone = os.getenv("TIMEZONE", "America/New_York")
     send_hour = int(os.getenv("SEND_HOUR", "19"))
     send_minute = int(os.getenv("SEND_MINUTE", "0"))
@@ -37,11 +38,34 @@ def main():
         logger.error("TELEGRAM_BOT_TOKEN not found in environment variables")
         return
 
-    if not openai_api_key:
-        logger.error("OPENAI_API_KEY not found in environment variables")
-        return
-
     logger.info("Starting Quran Telegram Bot...")
+
+    # Load Quran translation data
+    logger.info("Loading Quran translation data...")
+    try:
+        json_path = "quran_en.json"
+        with open(json_path, "r", encoding="utf-8") as f:
+            quran_translations = json.load(f)
+
+        # Validate structure
+        if not isinstance(quran_translations, list) or len(quran_translations) != 114:
+            logger.error(f"Invalid quran_en.json structure: expected 114 surahs, got {len(quran_translations)}")
+            return
+
+        logger.info(f"Successfully loaded {len(quran_translations)} surahs")
+
+        # Store in quran_service
+        quran_service.set_translations(quran_translations)
+
+    except FileNotFoundError:
+        logger.error(f"quran_en.json not found in {os.getcwd()}")
+        return
+    except json.JSONDecodeError as e:
+        logger.error(f"Invalid JSON in quran_en.json: {e}")
+        return
+    except Exception as e:
+        logger.error(f"Error loading translations: {e}")
+        return
 
     # Initialize database
     database.init_db()

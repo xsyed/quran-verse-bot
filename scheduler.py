@@ -13,7 +13,7 @@ from telegram.error import TelegramError
 
 import database
 from quran_data import get_surah_info, get_next_verse
-from openai_service import generate_three_verses_explanation, format_three_verses_message
+from quran_service import get_verse_translation, format_three_verses_message
 
 logger = logging.getLogger(__name__)
 
@@ -74,15 +74,17 @@ async def send_three_verses_to_user(
             logger.error(f"No verses collected for user {user_id}")
             return False, current_surah, current_verse
 
-        # Generate explanations for all verses in a single API call
-        explanations = generate_three_verses_explanation(verses_data)
-
-        if not explanations:
-            logger.error(f"Failed to generate explanations for user {user_id}")
-            return False, current_surah, current_verse
+        # Get translations for all verses from JSON
+        translations = []
+        for v in verses_data:
+            translation = get_verse_translation(v['surah'], v['verse'])
+            if not translation:
+                logger.error(f"Failed to get translation for {v['surah']}:{v['verse']}")
+                return False, current_surah, current_verse
+            translations.append(translation)
 
         # Format all verses into one message
-        message = format_three_verses_message(verses_data, explanations)
+        message = format_three_verses_message(verses_data, translations)
 
         if not message:
             logger.error(f"Failed to format message for user {user_id}")
