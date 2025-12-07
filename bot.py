@@ -34,7 +34,7 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "Commands:\n"
             "/start - Subscribe to daily verses\n"
             "/stop - Unsubscribe from daily verses\n"
-            "/anotherone - Get next 3 verses on demand (max 10/day)"
+            "/anotherone - Get next 3 verses on demand (max 20/day)"
         )
     else:
         progress = database.get_user_progress(user_id)
@@ -102,7 +102,7 @@ async def anotherone_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
         tomorrow = tomorrow + timedelta(days=1)
 
         await update.message.reply_text(
-            "You have reached your daily limit of 10 verse requests.\n\n"
+            "You have reached your daily limit of 20 verse requests.\n\n"
             f"Your limit will reset at midnight EST.\n\n"
             "See you tomorrow!"
         )

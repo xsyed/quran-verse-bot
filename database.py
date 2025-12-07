@@ -276,7 +276,7 @@ def should_send_today(user_id: int, timezone_str: str = "America/New_York") -> b
         return False
 
 
-def can_request_verses(user_id: int, timezone_str: str = "America/New_York", max_requests: int = 10) -> bool:
+def can_request_verses(user_id: int, timezone_str: str = "America/New_York", max_requests: int = 20) -> bool:
     """
     Check if a user can request verses today.
     Returns True if the user has requests remaining today.
@@ -284,7 +284,7 @@ def can_request_verses(user_id: int, timezone_str: str = "America/New_York", max
     Args:
         user_id: User ID to check
         timezone_str: Timezone string (default: EST)
-        max_requests: Maximum requests allowed per day (default: 10)
+        max_requests: Maximum requests allowed per day (default: 20)
 
     Returns:
         True if user can request verses, False otherwise
@@ -400,17 +400,17 @@ def increment_request_count(user_id: int, timezone_str: str = "America/New_York"
         return False
 
 
-def get_requests_remaining(user_id: int, timezone_str: str = "America/New_York", max_requests: int = 10) -> int:
+def get_requests_remaining(user_id: int, timezone_str: str = "America/New_York", max_requests: int = 20) -> int:
     """
     Get the number of requests remaining for a user today.
 
     Args:
         user_id: User ID
         timezone_str: Timezone string (default: EST)
-        max_requests: Maximum requests allowed per day (default: 10)
+        max_requests: Maximum requests allowed per day (default: 2-)
 
     Returns:
-        Number of requests remaining (0-10)
+        Number of requests remaining (0-20)
     """
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
