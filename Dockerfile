@@ -16,23 +16,26 @@ COPY requirements.txt .
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application files
-COPY main.py .
-COPY bot.py .
-COPY database.py .
-COPY openai_service.py .
-COPY scheduler.py .
-COPY quran_data.py .
+# Copy all application files dynamically
+# This ensures any new .py files are automatically included
+COPY *.py ./
 
-# Copy health check script
-COPY healthcheck.sh .
-RUN chmod +x healthcheck.sh
+# Copy shell scripts (healthcheck.sh)
+COPY --chmod=755 healthcheck.sh ./
+
+# Copy JSON data files
+COPY *.json ./
 
 # Create directory for database
 RUN mkdir -p /app/data
 
 # Set environment variables
-ENV PYTHONUNBUFFERED=1
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1
+
+# Health check to verify bot is running
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD /app/healthcheck.sh || exit 1
 
 # Run the bot
-CMD ["python", "main.py"]
+CMD ["python", "-u", "main.py"]

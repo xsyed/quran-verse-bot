@@ -40,8 +40,22 @@ Thumbs.db
 README.md
 CLAUDE.md
 claude.md
+*.md
+!healthcheck.sh
 
 # Docker files (not needed inside container)
 Dockerfile
 docker-compose.yml
 .dockerignore
+
+# Backup and deployment scripts (not needed inside container)
+backup_db.sh
+setup_cron.sh
+*-deploy.sh
+quran_backups/
+data/
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
