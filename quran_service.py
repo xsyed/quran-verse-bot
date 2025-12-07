@@ -68,18 +68,34 @@ def format_three_verses_message(verses_data: list, translations: list) -> str:
         logger.error(f"Mismatch: {len(verses_data)} verses but {len(translations)} translations")
         return ""
 
-    # Build header
-    header = "🌙 Today's Daily Quran Verses\n\n"
+    # Get first and last verse numbers for the header
+    first_verse = verses_data[0]
+    last_verse = verses_data[-1]
 
-    # Build verse list
-    verses_list = []
-    for i, v in enumerate(verses_data):
-        verse_header = f"📖 Surah {v['surah']}: {v['surah_name']} - Verse {v['verse']}"
-        separator = "─" * 40
-        translation = translations[i]
-        verses_list.append(f"{verse_header}\n{separator}\n{translation}")
+    # Build header with verse range
+    header = f"🌙 Today's Daily Quran Verses\n"
 
-    # Combine with spacing
-    combined_verses = "\n\n".join(verses_list)
+    # Check if all verses are from the same surah
+    all_same_surah = all(v['surah'] == first_verse['surah'] for v in verses_data)
 
-    return header + combined_verses
+    if all_same_surah:
+        # Simple case: all verses from same surah
+        header += f"Surah {first_verse['surah']}: {first_verse['surah_name']} - Verse {first_verse['verse']} to {last_verse['verse']}\n"
+    else:
+        # Cross-surah case: show each verse individually
+        verse_refs = []
+        for v in verses_data:
+            verse_refs.append(f"{v['surah']}:{v['verse']}")
+        header += f"Verses: {', '.join(verse_refs)}\n"
+
+    header += "----------\n"
+
+    # Build translation list (numbered)
+    translation_lines = []
+    for i, translation in enumerate(translations, 1):
+        translation_lines.append(f"{translation}")
+
+    # Combine translations with spacing
+    combined_translations = "\n\n".join(translation_lines)
+
+    return header + combined_translations
