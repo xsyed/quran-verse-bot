@@ -14,7 +14,6 @@ A Telegram bot that sends 3 Quran verses daily at 7:00 PM EST to subscribed user
 
 - Python 3.13
 - python-telegram-bot (async)
-- OpenAI API (gpt-4o-mini)
 - SQLite database
 - APScheduler
 - pytz for timezone management
@@ -38,9 +37,6 @@ Edit `.env` and add your API keys:
 # Get from @BotFather on Telegram
 TELEGRAM_BOT_TOKEN=your_bot_token_here
 
-# Get from platform.openai.com
-OPENAI_API_KEY=your_openai_api_key_here
-
 # Timezone (default: EST)
 TIMEZONE=America/New_York
 
@@ -56,11 +52,6 @@ SEND_MINUTE=0
 2. Send `/newbot` command
 3. Follow instructions to create your bot
 4. Copy the token to your `.env` file
-
-**OpenAI API Key:**
-1. Go to https://platform.openai.com/api-keys
-2. Create a new API key
-3. Copy the key to your `.env` file
 
 #### 3. Create Data Directory
 
@@ -168,7 +159,6 @@ quran-telegram-bot/
 ├── main.py                 # Bot entry point
 ├── bot.py                  # Telegram bot handlers
 ├── database.py             # SQLite database operations
-├── openai_service.py       # OpenAI API integration
 ├── scheduler.py            # Daily verse scheduler
 ├── quran_data.py           # Quran structure data
 └── quran.db                # SQLite database (auto-created)
@@ -205,11 +195,6 @@ Using GPT-4o-mini:
 - Check `TELEGRAM_BOT_TOKEN` is correct
 - Ensure bot is running: `python main.py`
 - Check logs for errors
-
-**OpenAI errors:**
-- Verify `OPENAI_API_KEY` is valid
-- Check OpenAI account has credits
-- Review API rate limits
 
 **Verses not sent at scheduled time:**
 - Confirm timezone is correct
