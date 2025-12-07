@@ -73,7 +73,7 @@ def format_three_verses_message(verses_data: list, translations: list) -> str:
     last_verse = verses_data[-1]
 
     # Build header with verse range
-    header = f"🌙 Today's Daily Quran Verses\n"
+    header = f"🌙 Today's Daily Quran Verses\n\n"
 
     # Check if all verses are from the same surah
     all_same_surah = all(v['surah'] == first_verse['surah'] for v in verses_data)
@@ -88,7 +88,7 @@ def format_three_verses_message(verses_data: list, translations: list) -> str:
             verse_refs.append(f"{v['surah']}:{v['verse']}")
         header += f"Verses: {', '.join(verse_refs)}\n"
 
-    header += "----------\n"
+    header += "---------------------------------------\n"
 
     # Build translation list (numbered)
     translation_lines = []
