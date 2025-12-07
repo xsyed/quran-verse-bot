@@ -88,7 +88,7 @@ def format_three_verses_message(verses_data: list, translations: list) -> str:
             verse_refs.append(f"{v['surah']}:{v['verse']}")
         header += f"Verses: {', '.join(verse_refs)}\n"
 
-    header += "---------------------------------------\n"
+    header += "---------------------------------------------------------\n"
 
     # Build translation list (numbered)
     translation_lines = []
