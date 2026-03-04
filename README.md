@@ -7,7 +7,7 @@ A Telegram bot that sends 3 Quran verses daily at 7:00 PM EST to subscribed user
 - Daily delivery of 3 Quran verses at 7:00 PM EST
 - Individual progress tracking for each user
 - AI-generated transliteration, translation, and contextual explanations using OpenAI GPT-4o-mini
-- Simple subscription management with /start and /stop commands
+- Subscription and request commands: /start, /stop, /anotherone, /resetlimit
 - Persistent progress storage (resume where you left off)
 
 ## Tech Stack
@@ -135,6 +135,8 @@ Bot started successfully! Daily verses scheduled for 19:00 America/New_York
 
 - `/start` - Subscribe to daily verses (begins at Surah 1:1)
 - `/stop` - Unsubscribe (progress is saved)
+- `/anotherone` - Get next 3 verses on demand (max 20/day)
+- `/resetlimit` - Reset your daily request counter to 0 for today (self-reset)
 
 ### How It Works
 

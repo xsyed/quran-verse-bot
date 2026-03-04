@@ -34,7 +34,8 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "Commands:\n"
             "/start - Subscribe to daily verses\n"
             "/stop - Unsubscribe from daily verses\n"
-            "/anotherone - Get next 3 verses on demand (max 20/day)"
+            "/anotherone - Get next 3 verses on demand (max 20/day)\n"
+            "/resetlimit - Reset your daily request counter to 0 for today"
         )
     else:
         progress = database.get_user_progress(user_id)
@@ -131,10 +132,40 @@ async def anotherone_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
         logger.error(f"Failed to send verses for user {user_id} via /anotherone")
 
 
+async def resetlimit_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle /resetlimit command - Reset daily request count to 0 for today."""
+    user_id = update.effective_user.id
+    timezone_str = os.getenv("TIMEZONE", "America/New_York")
+
+    # Check if user exists and is active
+    progress = database.get_user_progress(user_id)
+    if not progress:
+        await update.message.reply_text(
+            "You are not subscribed to daily verses.\n\n"
+            "Please use /start to subscribe first."
+        )
+        logger.info(f"User {user_id} tried /resetlimit but is not subscribed")
+        return
+
+    success = database.reset_request_count(user_id, timezone_str)
+    if success:
+        await update.message.reply_text(
+            "Your daily request counter has been reset to 0 for today.\n\n"
+            "You can now use /anotherone again (up to 20 requests today)."
+        )
+        logger.info(f"User {user_id} reset daily request counter")
+    else:
+        await update.message.reply_text(
+            "Sorry, there was an error resetting your limit. Please try again later."
+        )
+        logger.error(f"Failed to reset request counter for user {user_id}")
+
+
 def setup_bot(application: Application):
     """Set up bot command handlers."""
     application.add_handler(CommandHandler("start", start_command))
     application.add_handler(CommandHandler("stop", stop_command))
     application.add_handler(CommandHandler("anotherone", anotherone_command))
+    application.add_handler(CommandHandler("resetlimit", resetlimit_command))
 
     logger.info("Bot handlers registered")

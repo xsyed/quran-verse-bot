@@ -400,6 +400,46 @@ def increment_request_count(user_id: int, timezone_str: str = "America/New_York"
         return False
 
 
+def reset_request_count(user_id: int, timezone_str: str = "America/New_York") -> bool:
+    """
+    Reset a user's request count to 0 for the current day.
+
+    Args:
+        user_id: User ID
+        timezone_str: Timezone string (default: EST)
+
+    Returns:
+        True if successful, False otherwise
+    """
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+
+    try:
+        tz = pytz.timezone(timezone_str)
+        today_date = datetime.now(tz).date().isoformat()
+
+        cursor.execute(
+            """
+            UPDATE users
+            SET requests_today = 0, last_request_date = ?
+            WHERE user_id = ? AND active = 1
+            """,
+            (today_date, user_id)
+        )
+
+        conn.commit()
+        success = cursor.rowcount > 0
+        conn.close()
+
+        if success:
+            logger.info(f"Reset request count for user {user_id} on {today_date}")
+        return success
+    except Exception as e:
+        logger.error(f"Error resetting request count for user {user_id}: {e}")
+        conn.close()
+        return False
+
+
 def get_requests_remaining(user_id: int, timezone_str: str = "America/New_York", max_requests: int = 20) -> int:
     """
     Get the number of requests remaining for a user today.

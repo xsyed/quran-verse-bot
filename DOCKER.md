@@ -401,7 +401,6 @@ docker-compose logs --tail=100
 
 # Common causes and solutions:
 # 1. Invalid TELEGRAM_BOT_TOKEN → Check .env file
-# 2. Invalid OPENAI_API_KEY → Verify API key is correct
 # 3. Network issues → Check internet connectivity
 # 4. Python code errors → Review logs for stack traces
 ```
